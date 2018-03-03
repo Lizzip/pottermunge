@@ -1,0 +1,15 @@
+{
+    "name": "pottermunge",
+    "version": "1.0.0",
+    "description": "For concatenating all mp3 files in a directory (and sub-directories) into one mp3 file",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Lizzip",
+    "license": "ISC",
+    "dependencies": {
+        "audioconcat": "^0.1.3",
+        "minimist": "^1.2.0"
+    }
+}
