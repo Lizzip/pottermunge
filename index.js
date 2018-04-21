@@ -40,40 +40,40 @@ const splitArray = (array, numOfSegments) => {
 		segments.push(array.slice(clip,segment + clip));
 	}
 	segments.push(array.slice((numOfSegments-1)*segment));
-	
+
 	return segments;
 }
 
 const argv = parseArgs(process.argv, {});
 
 if (argv.dir && argv.name) {
-    walk(argv.dir, (err, results) => {
-        if (err) throw err;
+	walk(argv.dir, (err, results) => {
+		if (err) throw err;
 
-        let files = results;
-        files = files.filter(result => result.includes(".mp3"));
-		
+		let files = results;
+		files = files.filter(result => result.includes(".mp3"));
+
 		const split = argv.split || 1;
 		const sections = splitArray(files, split);
-		
+
 		let i = 1;
 		sections.forEach((section) => {
 			audioconcat(section)
-            .concat(`${argv.name}_${i}.mp3`)
-            .on('start', function(command) {
-                console.log('ffmpeg process started:', command)
-            })
-            .on('error', function(err, stdout, stderr) {
-                console.error('Error:', err)
-                console.error('ffmpeg stderr:', stderr)
-            })
-            .on('end', function(output) {
-                console.error('Audio created in:', output)
-            });
-			
+			.concat(`${argv.name}_${i}.mp3`)
+			.on('start', function(command) {
+				console.log('ffmpeg process started:', command)
+			})
+			.on('error', function(err, stdout, stderr) {
+				console.error('Error:', err)
+				console.error('ffmpeg stderr:', stderr)
+			})
+			.on('end', function(output) {
+				console.error('Audio created in:', output)
+			});
+
 			i++;
-        });
-    });
+		});
+	});
 } else {
     console.log("--dir and --name flags required, --split flag optional");
 }
