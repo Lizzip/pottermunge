@@ -32,6 +32,18 @@ const walk = (dir, done) => {
     });
 };
 
+const splitArray = (array, numOfSegments) => {
+	const segment = Math.floor(array.length / numOfSegments);
+	const segments = [];
+	for(let i = 0; i < numOfSegments-1; i++){
+		let clip = i*segment;
+		segments.push(array.slice(clip,segment + clip));
+	}
+	segments.push(array.slice((numOfSegments-1)*segment));
+	
+	return segments;
+}
+
 const argv = parseArgs(process.argv, {});
 
 if (argv.dir && argv.name) {
@@ -40,13 +52,14 @@ if (argv.dir && argv.name) {
 
         let files = results;
         files = files.filter(result => result.includes(".mp3"));
-
-        files.forEach((file) => {
-            console.log(file);
-        });
-
-        audioconcat(files)
-            .concat(argv.name + '.mp3')
+		
+		const split = argv.split || 1;
+		const sections = splitArray(files, split);
+		
+		let i = 1;
+		sections.forEach((section) => {
+			audioconcat(section)
+            .concat(`${argv.name}_${i}.mp3`)
             .on('start', function(command) {
                 console.log('ffmpeg process started:', command)
             })
@@ -57,7 +70,10 @@ if (argv.dir && argv.name) {
             .on('end', function(output) {
                 console.error('Audio created in:', output)
             });
+			
+			i++;
+        });
     });
 } else {
-    console.log("--dir and --name flags required");
+    console.log("--dir and --name flags required, --split flag optional");
 }
